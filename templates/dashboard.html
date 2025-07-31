@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="{{url_for('static',filename='dashboard.css')}}" />
+</head>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}   
+    {% for message in messages %}
+      <center>{{ message }}</center>
+    {% endfor %}    
+  {% endif %}
+{% endwith %}
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <div class="dropdown">
+        <button class="dropbtn">Notes</button>
+        <div class="dropdown-content">
+          <a href="{{url_for('addnotes')}}">Add Notes</a>
+          <a href="{{url_for('viewallnotes')}}">View All Notes</a>
+          <a href="{{url_for('getexceldata')}}">Excel Data</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">Files</button>
+        <div class="dropdown-content">
+          <a href="{{url_for('fileupload')}}">File Upload</a>
+          <a href="{{url_for('viewallfiles')}}">View All Files</a>
+        </div>
+      </div>
+    </div>
+    {{session.get('user')}}
+    <form method="post" action="{{url_for('search')}}">
+    <div class="nav-right">
+      <input type="text" name="searchdata" placeholder="Search..." class="search-input" />
+      <button class="search-btn">Search</button>
+    </div>
+    </form>
+    <a href="{{url_for('userlogout')}}"><button class="logout-btn">Logout</button></a>
+    
+  </nav>
+  {% block content %}{% endblock %}
+  {% if matcheddata %}
+    <table>
+    <thead>
+      <tr>
+        <th>nid</th>
+        <th>title</th>
+        <th>created_at</th>
+        <th>links</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for i in matcheddata %}
+      <tr>
+        <td>{{i[0]}}</td>
+        <td>{{i[1]}}</td>
+        <td>{{i[3]}}</td>
+        <td><a href="{{url_for('viewnotes',nid=i[0])}}">View</a>
+        <a href="{{url_for('updatenotes',nid=i[0])}}">Update</a>
+        <a href="{{url_for('deletenotes',nid=i[0])}}">Delete</a></td>
+      </tr>
+      {% endfor %}
+      <!-- You can add more rows here -->
+    </tbody>
+  </table>
+  {% endif %}
+</body>
+</html>
